@@ -491,7 +491,7 @@ extension RichEditorView {
     private func scrollCaretToVisible() {
         let scrollView = self.webView.scrollView
         
-        let contentHeight = clientHeight > 0 ? CGFloat(clientHeight) : scrollView.frame.height
+        let contentHeight = clientHeight > 0 ? CGFloat(clientHeight) : scrollView.contentSize.height
         scrollView.contentSize = CGSizeMake(scrollView.frame.width, contentHeight)
         
         // TODO: Make these either more dynamic or customizable!
@@ -501,9 +501,13 @@ extension RichEditorView {
         let visiblePosition = CGFloat(caretPosition)
         var offset: CGPoint?
         
-        if visiblePosition + cursorHeight > scrollView.bounds.size.height {
+        let h = scrollView.bounds.height - scrollView.contentInset.bottom;
+        
+        if visiblePosition + cursorHeight > scrollView.bounds.height - scrollView.contentInset.bottom {
             // Visible caret position goes further than our bounds
-            offset = CGPoint(x: 0, y: (visiblePosition + lineHeight) - scrollView.bounds.height + scrollView.contentOffset.y)
+            offset = CGPoint(x: 0, y: (visiblePosition + cursorHeight) - (scrollView.bounds.height - scrollView.contentInset.bottom) + scrollView.contentOffset.y)
+            
+            
             
         } else if visiblePosition < 0 {
             // Visible caret position is above what is currently visible
